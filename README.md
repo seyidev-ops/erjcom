@@ -1,72 +1,105 @@
-# Everything Remote Job — v1.0.0
+# Everything Remote Job — v1.1.0 (merged)
 
-A complete rebuild. Nothing is carried over from the previous codebase except the
-photographs, the logo and the copy that was true.
+`build/` is the complete, deployable site. Push its **contents** (not the folder
+itself) to the root of the GitHub Pages repo, replacing what's there now.
+`tooling/` is the build system that produced it — not deployed, kept for when
+you need to change something later.
 
-## Build it
+## What's in this release
+
+**v1.0.0** was a from-scratch rebuild of the 13 public marketing pages —
+new design system, one image geometry, real accessibility and SEO checks.
+
+**v1.1.0** (this build) merges the operational site back in: participant
+login, the student dashboard, admin, instructor, the internal surge
+console, and the two real interactive tools (the CV self-scan and the
+four-point diagnostic — both previously placeholder pages in v1.0.0 that
+only handed off to WhatsApp). Nothing operational was left behind.
+
+## Seven real bugs found and fixed during the merge
+
+None of these were introduced by the rebuild — they were already live.
+Merging surfaced them because it's the first time the whole site has been
+run through a real browser test suite at once.
+
+1. **`dashboard.html`** called `window.ERJ_ASCEND.render()` — the tier-based
+   upsell — but never loaded the two scripts it depends on. The upsell has
+   been silently inert since it was built. Fixed.
+2. **8 portal pages** pointed `og:image` at preview files that were never
+   generated (dashboard, admin, instructor, login, and their variants).
+   Harmless for search — all noindex — but broke a manual WhatsApp/Slack
+   share of the link. Repointed at one generated neutral preview.
+3. **v1's marketing pages never registered the service worker.** `sw.js`
+   existed on disk but nothing ever installed it — offline support and
+   the install prompt were both dead. Fixed.
+4. **The capture layer bridged WhatsApp links sitting inside the site's own
+   navigation**, not just page content. On `cvscan/` — whose own nav group
+   auto-opens because it's the current page — this injected a broken,
+   badly-positioned paragraph directly into the dropdown markup itself.
+   Found by the browser suite as ~370px of content sitting off-screen.
+   Fixed at the source and recompiled.
+5. **Six tap targets under 30px** on the three login pages (forgot
+   password, back-to-site, cross-links between login/admin/instructor).
+6. **The shared nav's brand mark and links, and the shared footer's
+   links** — used by all 14 ported/tool pages — rendered ~26px tall with
+   no padding. One fix, inherited everywhere.
+7. **cvscan's result cards** used a 310px minimum width that didn't fit
+   inside a 320px phone screen. Reduced to 260px.
+
+## What's intentionally left as-is
+
+- **`erj-surge-console.html`** (your internal daily-posting tool, not
+  customer-facing) has 24px of horizontal overflow at exactly 320px — the
+  narrowest phone width there is. Its tab bar already scrolls
+  horizontally by design; this is a minor residual, not a content bug.
+- **`cvscan/`'s layout shift** sits at 0.052 (Core Web Vitals "needs
+  improvement," not "poor") — inherent to a tool that loads a PDF/DOCX
+  parser and reveals real scan results dynamically, unlike the static
+  marketing pages. Worth a look if you want to chase perfect scores, not
+  urgent.
+
+## The URL structure changed — the 404 page carries the map
+
+Old folder-style product URLs (`/masterytraining/`, `/getaremotejob/`,
+`/innercircle/`, `/masterclass/`) are superseded by the new flat pages.
+`404.html` holds the complete redirect map — old retired stubs plus these
+four — so a bookmark, an old ad, or a saved WhatsApp link still lands
+somewhere useful instead of a dead page.
+
+**The honest limit:** GitHub Pages can't issue a real 301, so these return
+a 404 status and the redirect happens client-side. Search engines drop the
+old URL correctly, but no ranking signal passes to the new one. If any of
+these ever earns real backlinks, the right fix is a proper 200-status stub
+for that one URL — not another map entry.
+
+`cvscan/` and `diagnose/` are **not** in that map — they're real, live
+tools now, not retired stubs.
+
+## Rebuilding from source
 
 ```bash
-python3 images.py     # normalise every photo to ONE geometry + responsive variants
-npx tsc src/app.ts --outDir build --target es2018 --strict --lib es2018,dom
-python3 og.py         # one social preview per page
-python3 pages.py      # generate every HTML page, sitemap, robots, manifest, sw
-python3 validate.py   # 8 static checks — must exit 0
-python3 test_browser.py   # 54 assertions in real Chromium — must exit 0
+cd tooling
+python3 images.py                                      # normalise photos
+python3 pages.py                                        # 11 marketing pages
+npx tsc src/app.ts --outDir ../build --target es2018 --strict --lib es2018,dom
+python3 og.py                                            # social previews
+python3 merge.py                                         # port + fix the operational site
+python3 finalize.py                                       # 404 map, sitemap, robots, sw.js
+python3 validate.py                                       # must exit 0
+python3 test_browser.py                                   # real Chromium, must exit 0
 ```
 
-`build/` is the deployable site. Nothing outside it ships.
+Run in this order — each step depends on the file state the previous one
+left behind. `merge.py` and `finalize.py` are idempotent; re-running them
+after a small manual edit is safe.
 
-## Why it is built this way
+## Two things worth your attention, not blockers
 
-**Pages are generated, not hand-written.** `<head>`, header, nav, footer and every
-SEO tag come from one function in `erjsite.py`. A page cannot disagree with the
-others because a page does not own any of that. The old site drifted precisely
-because each page carried its own copy — that is how it ended up with canonicals
-on some pages and not others, an `og:image` pointing at a file that never existed,
-and two pages that did not load the stylesheet at all.
-
-**One stylesheet, one script.** No page-local `<style>`, no inline handlers. The
-validator fails the build if either appears.
-
-**One image geometry.** Every UI photo is cropped to 3:2 *in the file* by
-`images.py`. The markup never needs to know which picture it is holding, so there
-is no per-image CSS and no layout shift. Sources ranged from 0.67 to 1.50 — that
-mismatch is what made the old cards refuse to line up.
-
-**One gutter token.** `--gutter: clamp(1.25rem, 5vw, 3.25rem)`, with
-`env(safe-area-inset-*)` for notches. Containers, the header, the marquee and both
-floating controls all obey it, so nothing can crowd the screen edge. A browser test
-measures the real distance from every heading, paragraph, card and button to both
-edges at 11 widths and fails under 16px.
-
-## Permanent fixes for the bugs that kept coming back
-
-| Old bug | Fix, and why it is permanent |
-| --- | --- |
-| Horizontal overflow | `overflow-x: clip` (not `hidden`, which kills `position: sticky`). Asserted at 11 widths × 13 pages. |
-| Closed drawer widened the page | `visibility: hidden` while closed. A test opens, escapes and re-measures. |
-| One missing `sw.js` SHELL path aborted the entire precache | SHELL is **generated from the real file list**, and the worker adds entries individually so one bad asset cannot take the rest down. |
-| Replaced an image, users saw the old one | Content-addressed filenames from the pipeline; the service worker versions its cache. |
-| Canonical with a `#fragment` (Google discards it) | Emitted centrally, validated. |
-| Two pages sharing one `og:image` | One preview per page, uniqueness asserted. |
-| Images causing layout shift | Fixed `aspect-ratio` + real `width`/`height`; CLS measured under 0.02. |
-| Time-bound social previews | Kickers are evergreen. No cohort number, no date — OG images cache for months. |
-
-## Interaction
-
-`src/app.ts` is the only script. Theme (set before first paint, so no flash),
-off-canvas drawer with focus trap and scroll lock, `IntersectionObserver` reveals,
-staggered groups, image fade-in over an inlined LQIP, one rAF-throttled scroll pass
-driving the sticky header + reading progress + back-to-top, section spy, count-up
-statistics, and copy-to-clipboard. Every unit is isolated in a `try` so one failure
-cannot stop the rest, and everything collapses gracefully under
-`prefers-reduced-motion`.
-
-## Known limits
-
-- **Fonts load from Google Fonts.** The sandbox blocks that host, so the test suite
-  ignores font 403s. Self-host if you want zero third-party requests.
-- **The diagnostic and CV scan currently hand off to WhatsApp** rather than running
-  in-page. The interactive versions can be ported in; the routes and copy are ready.
-- **Testimonial figures** are carried over from the previous site and should be
-  confirmed against your records before this goes live.
+- **`dashboard.html`, `admin.html`, `instructor.html`, `participant.html`
+  content is preserved byte-for-byte** except the mechanical fixes above
+  (added script tags, padding, a repointed image). Cohort-specific text,
+  dates, and numbers were not touched — the freeze you asked for on these
+  files stays in effect.
+- Several portal pages (`admin.html`, `dashboard.html`, `login.html`, and
+  others) have no `<link rel="canonical">`. Harmless since they're all
+  noindex, but flagged in case you ever want it added for consistency.
