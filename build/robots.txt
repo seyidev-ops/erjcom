@@ -1,0 +1,9 @@
+# Everything Remote Job
+# Pages that must stay out of the index carry a noindex meta tag and are
+# deliberately NOT disallowed here: a blocked URL is never crawled, so its
+# noindex is never read, and an already-indexed page stays indexed.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://everythingremotejob.com/sitemap.xml
