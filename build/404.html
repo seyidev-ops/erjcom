@@ -28,10 +28,37 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="app.css">
-<script>/* set the theme before first paint so it never flashes */
-(function(){try{var t=localStorage.getItem('erj-theme');
-if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'day':'night';
-document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>
+(function () {
+  var LEGACY = {
+    '/howtogetaremotejob/':            'get-a-remote-job.html',
+    '/job-world-mastery.html':         'mastery-training.html',
+    '/jobs.html':                      'testimonials.html#jobboard',
+    '/products/remote-job/':           'get-a-remote-job.html',
+    '/products/mastery-training/':     'mastery-training.html',
+    '/products/inner-circle/':         'inner-circle.html',
+    '/masterytraining/':               'mastery-training.html',
+    '/getaremotejob/':                 'get-a-remote-job.html',
+    '/innercircle/':                   'inner-circle.html',
+    '/masterclass/':                   'masterclass.html'
+  };
+
+  var path = location.pathname.replace(/\/index\.html$/, '/');
+  var target = LEGACY[path];
+
+  if (!target) {
+    var alt = path.slice(-1) === '/' ? path.slice(0, -1) : path + '/';
+    target = LEGACY[alt];
+  }
+
+  if (target) {
+    var hash = target.indexOf('#') > -1 ? '' : location.hash;
+    location.replace('/' + target + hash);
+  } else {
+    document.documentElement.setAttribute('data-lost', 'true');
+  }
+})();
+</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Everything Remote Job","url":"https://everythingremotejob.com/","logo":"https://everythingremotejob.com/erj-mark-white.png","sameAs":["https://whatsapp.com/channel/0029Vaym4DE3mFY2wCrC713S"],"contactPoint":[{"@type":"ContactPoint","contactType":"customer support","telephone":"+2348032925957","areaServed":"NG","availableLanguage":"English"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://everythingremotejob.com/"},{"@type":"ListItem","position":2,"name":"Page not found \u2014 try one of these","item":"https://everythingremotejob.com/404.html"}]}</script>
 </head>
@@ -76,7 +103,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
     <h2 class="vh">Where to go instead</h2>
     <div class="grid grid-3 mt-6" data-reveal-stagger>
       <a class="card" href="index.html"><h3>Home</h3><p class="mt-2">What we do and who it is for</p></a>
-      <a class="card" href="diagnose.html"><h3>Find Your Leak</h3><p class="mt-2">Four questions, ninety seconds, free</p></a>
+      <a class="card" href="diagnose/"><h3>Find Your Leak</h3><p class="mt-2">Four questions, ninety seconds, free</p></a>
       <a class="card" href="free.html"><h3>Free For You</h3><p class="mt-2">CV scan, masterclass, blog, job board</p></a>
       <a class="card" href="starting-line.html"><h3>Your Starting Line</h3><p class="mt-2">The three routes, compared</p></a>
       <a class="card" href="register.html"><h3>Register</h3><p class="mt-2">Every option and price on one page</p></a>
@@ -98,7 +125,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
         <p style="margin-top:.7rem"><a class="tlink" href="https://wa.me/2348032925957" target="_blank"
            rel="noopener">WhatsApp +234 803 292 5957 <span class="arw">&rarr;</span></a></p>
       </div>
-      <div><h2 class="ftr-h">Start here</h2><ul><li><a href="diagnose.html">Find Your Leak</a></li><li><a href="cvscan.html">Free CV Self-Scan</a></li><li><a href="free.html">Free For You</a></li><li><a href="starting-line.html">Your Starting Line</a></li></ul></div><div><h2 class="ftr-h">Programmes</h2><ul><li><a href="mastery-training.html">Mastery Training</a></li><li><a href="get-a-remote-job.html">Get A Remote Job</a></li><li><a href="inner-circle.html">The Inner Circle</a></li><li><a href="register.html">Register</a></li></ul></div><div><h2 class="ftr-h">More</h2><ul><li><a href="testimonials.html">Success Stories</a></li><li><a href="blog.html">The Blog</a></li><li><a href="masterclass.html">Free Masterclass</a></li><li><a href="https://whatsapp.com/channel/0029Vaym4DE3mFY2wCrC713S" target="_blank" rel="noopener">Free Job Board</a></li></ul></div>
+      <div><h2 class="ftr-h">Start here</h2><ul><li><a href="diagnose/">Find Your Leak</a></li><li><a href="cvscan/">Free CV Self-Scan</a></li><li><a href="free.html">Free For You</a></li><li><a href="starting-line.html">Your Starting Line</a></li></ul></div><div><h2 class="ftr-h">Programmes</h2><ul><li><a href="mastery-training.html">Mastery Training</a></li><li><a href="get-a-remote-job.html">Get A Remote Job</a></li><li><a href="inner-circle.html">The Inner Circle</a></li><li><a href="register.html">Register</a></li></ul></div><div><h2 class="ftr-h">More</h2><ul><li><a href="testimonials.html">Success Stories</a></li><li><a href="blog.html">The Blog</a></li><li><a href="masterclass.html">Free Masterclass</a></li><li><a href="https://whatsapp.com/channel/0029Vaym4DE3mFY2wCrC713S" target="_blank" rel="noopener">Free Job Board</a></li></ul></div><div><h2 class="ftr-h">Participants</h2><ul><li><a href="login.html">Participant Login</a></li></ul></div>
     </div>
     <div class="ftr-base">
       <span>&copy; 2026 Everything Remote Job &middot; Business Play Limited</span>
@@ -113,5 +140,6 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </button>
 
 <script src="app.js" defer></script>
+<script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").then(function(r){r.update();}).catch(function(){});});}</script>
 </body>
 </html>
