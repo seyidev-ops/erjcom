@@ -1,0 +1,14 @@
+# Everything Remote Job
+# Pages that must stay out of the index carry a noindex meta tag and are
+# deliberately NOT disallowed here: a blocked URL is never crawled, so its
+# noindex is never read, and an already-indexed page stays indexed.
+# This covers both the public marketing/tool pages (indexable) and the
+# participant/admin/instructor portal (noindex,nofollow on every page).
+
+User-agent: *
+Allow: /
+
+# Query-string permutations of any reader view
+Disallow: /*?p=
+
+Sitemap: https://everythingremotejob.com/sitemap.xml
